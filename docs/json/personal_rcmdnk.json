@@ -757,9 +757,7 @@
                 "^com\\.apple\\.x11$",
                 "^org\\.macosforge\\.xquartz\\.X11$",
                 "^org\\.macports\\.X11$",
-                "^org\\.mozilla\\.firefox$",
-                "^org\\.waterfoxproject\\.waterfox$",
-                "^com\\.google\\.Chrome$"
+                "^com\\.microsoft\\.VSCode$"
               ]
             }
           ]
@@ -838,9 +836,7 @@
                 "^com\\.apple\\.x11$",
                 "^org\\.macosforge\\.xquartz\\.X11$",
                 "^org\\.macports\\.X11$",
-                "^org\\.mozilla\\.firefox$",
-                "^org\\.waterfoxproject\\.waterfox$",
-                "^com\\.google\\.Chrome$"
+                "^com\\.microsoft\\.VSCode$"
               ]
             }
           ]

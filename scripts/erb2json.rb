@@ -223,6 +223,10 @@ def frontmost_application(type, app_aliases, as_json=true)
     '^com\.microsoft\.rdc.macos$',
   ]
 
+  editor_identifiers = [
+    '^com\.microsoft\.VSCode$'
+  ]
+
 
   # ----------------------------------------
 
@@ -291,10 +295,13 @@ def frontmost_application(type, app_aliases, as_json=true)
       bundle_identifiers.concat(vi_bundle_identifiers)
       bundle_identifiers.concat(virtual_machine_bundle_identifiers)
       bundle_identifiers.concat(x11_bundle_identifiers)
-      bundle_identifiers.concat(browser_bundle_identifiers)
+      bundle_identifiers.concat(editor_identifiers)
 
     when 'rdt'
       bundle_identifiers.concat(rdt_bundle_identifiers)
+
+    when 'editor'
+      bundle_identifiers.concat(editor_identifiers)
 
     else
       $stderr << "unknown app_alias: #{app_alias}\n"
@@ -706,6 +713,85 @@ def vim_emu_double(key1, as_json=false)
   )
   make_data(data, as_json)
 end
+
+def vim_emu_double_esc(key1, as_json=false)
+  data = []
+  data += vim_emu(
+    source_keys_list: key1,
+    dest_keys_list: [["delete_or_backspace"]] + vim_emu_mode(normal: 1),
+    conditions: [
+      {
+        type: "variable_if",
+        name: "vim_emu_insert",
+        value: 1,
+      },
+      {
+        type: "variable_if",
+        name: "vim_emu_" + key1 + "_pressed",
+        value: 1,
+      },
+      {
+      "type": "input_source_unless",
+      "input_sources": [
+          {
+              "language": "^ja$",
+          },
+        ]
+      },
+    ],
+    mode: ["insert"],
+  )
+  data += vim_emu(
+    source_keys_list: key1,
+    dest_keys_list: [
+      {
+        set_variable: {
+          name: "vim_emu_" + key1 + "_pressed",
+          value: 1,
+        },
+      },
+      {
+        key_code: key1,
+      },
+    ],
+    to_delayed_action: {
+      to_if_invoked: [
+        {
+          set_variable: {
+            name: "vim_emu_" + key1 + "_pressed",
+            value: 0,
+          }
+        }
+      ],
+      to_if_canceled: [
+        {
+          set_variable: {
+            name: "vim_emu_" + key1 + "_pressed",
+            value: 0,
+          }
+        }
+      ]
+    },
+    conditions: [
+      {
+        type: "variable_if",
+        name: "vim_emu_insert",
+        value: 1,
+      },
+      {
+        "type": "input_source_unless",
+        "input_sources": [
+            {
+                "language": "^ja$",
+            },
+          ]
+      },
+    ],
+    mode: ["insert"]
+  )
+  make_data(data, as_json)
+end
+ 
 
 number_letters = ("1".."9").to_a
 alphabet_letters = ("a".."z").to_a
