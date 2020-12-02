@@ -595,6 +595,7 @@ def vim_emu_mode(normal: 0, visual: 0, visual_line: 0, command: 0, command_w: 0,
 end
 
 def vim_emu_esc(source_keys_list, as_json=false)
+  conditions = source_keys_list == "escape" ? [frontmost_application_unless(["browser"], true)] : []
   unless source_keys_list.is_a? Array
     source_keys_list = [source_keys_list]
   end
@@ -604,17 +605,20 @@ def vim_emu_esc(source_keys_list, as_json=false)
     source_keys_list: source_keys_list,
     dest_keys_list: dest_keys_list,
     to_post_events: [["left_arrow"]] + vim_emu_mode(normal: 1),
+    conditions: conditions,
     mode: ["visual", "visual_line"],
   )
   data += vim_emu(
     source_keys_list: source_keys_list,
     dest_keys_list: dest_keys_list,
+    conditions: conditions,
     to_post_events: hash_to([["escape"]]) + vim_emu_mode(normal: 1),
     mode: ["search", "search_input"]
   )
   data += vim_emu(
     source_keys_list: source_keys_list,
     dest_keys_list: dest_keys_list,
+    conditions: conditions,
     to_post_events: vim_emu_mode(normal: 1),
   )
   make_data(data, as_json)
